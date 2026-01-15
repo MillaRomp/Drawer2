@@ -37,7 +37,8 @@ class PaivakirjaFragment : Fragment(R.layout.fragment_paivakirja) {
     private val selectedFiles = mutableSetOf<File>()
     private var isUnlocked = false
 
-
+    //hakee kaikki ui elementit käyttöön, kytkee toiminnallisuudet buttoneihin ja päättää
+    //näytetäänkö salasanan kysyminen vai lista merkinnöistä
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -59,34 +60,42 @@ class PaivakirjaFragment : Fragment(R.layout.fragment_paivakirja) {
     //salasanan tarkistusta jne
     private fun checkPassword() {
         val context = context ?: return
+        //haetaan tallennettu salasana muistista
         val prefs = context.getSharedPreferences("diary_prefs", Context.MODE_PRIVATE)
         val savedPassword = prefs.getString("password", null)
         
+        //ladataan se pyöreä dialogi tähän
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_password, null)
         val etPassword = dialogView.findViewById<EditText>(R.id.etDialogPassword)
         val tvTitle = dialogView.findViewById<TextView>(R.id.tvDialogTitle)
         val btnOk = dialogView.findViewById<Button>(R.id.btnDialogOk)
         val btnCancel = dialogView.findViewById<Button>(R.id.btnDialogCancel)
         
+        //jos salasanaa ei oo vielä olemassa niin pyydetään tekemään semmonen
         if (savedPassword == null) {
             tvTitle.text = "Aseta uusi salasana"
             etPassword.hint = "Luo salasana"
         } else {
+            //muuten kysytään se vanha salasana
             tvTitle.text = "Anna salasana"
             etPassword.hint = "Kirjoita salasana"
         }
         
+        //rakennetaan se popup ikkuna
         val dialog = AlertDialog.Builder(context)
             .setView(dialogView)
             .setCancelable(false)
             .create()
 
+        //pistetään tausta läpinäkyväksi että ne pyöreät kulmat ja borderit näkyy oikein
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
 
+        //mitä käy kun ok nappia painetaan
         btnOk.setOnClickListener {
             val pass = etPassword.text.toString()
             if (savedPassword == null) {
+                //jos eka kerta niin tallennetaan uusi salasana
                 if (pass.isNotEmpty()) {
                     prefs.edit().putString("password", pass).apply()
                     isUnlocked = true
@@ -96,6 +105,7 @@ class PaivakirjaFragment : Fragment(R.layout.fragment_paivakirja) {
                     Toast.makeText(context, "Aseta salasana!", Toast.LENGTH_SHORT).show()
                 }
             } else {
+                //jos salasana oli jo niin katsotaan oliko se oikein
                 if (pass == savedPassword) {
                     isUnlocked = true
                     dialog.dismiss()
@@ -106,6 +116,7 @@ class PaivakirjaFragment : Fragment(R.layout.fragment_paivakirja) {
             }
         }
 
+        //jos painetaan takaisin niin suljetaan tää ja heitetään käyttäjä takas ostoksiin
         btnCancel.setOnClickListener {
             dialog.dismiss()
             (activity as? MainActivity)?.updateSelection(R.id.nav_home, "Ostokset")

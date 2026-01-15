@@ -56,7 +56,7 @@ class KauppaFragment : Fragment(R.layout.fragment_kauppa) {
         }
         container.addView(itemView)
     }
-    //ostosten tallennus
+    //ostosten tallennus ja lataus
     private fun saveItems() {
         val container = containerShoppingList ?: return
         val items = mutableListOf<String>()
