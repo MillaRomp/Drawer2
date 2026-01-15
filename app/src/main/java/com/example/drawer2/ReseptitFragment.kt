@@ -31,7 +31,8 @@ class ReseptitFragment : Fragment(R.layout.fragment_reseptit) {
     private lateinit var tvFullTitle: TextView
     private lateinit var tvFullIngredients: TextView
     private lateinit var tvFullInstructions: TextView
-    
+
+    // API-avain themealdb:seen. "1" on ilmainen testiavain
     private val apiKey = "1"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,16 +47,20 @@ class ReseptitFragment : Fragment(R.layout.fragment_reseptit) {
         tvFullIngredients = view.findViewById(R.id.tvIngredientsList)
         tvFullInstructions = view.findViewById(R.id.tvRecipeInstructions)
 
+        // hakupainikkeen toiminnallisuus
         view.findViewById<Button>(R.id.btnSearchRecipe).setOnClickListener {
             val query = etSearch.text.toString().trim()
             if (query.isNotEmpty()) {
+                // Rakentaa URL-osoitteen hakusanalla ja aloittaa haun
                 searchRecipes("https://www.themealdb.com/api/json/v1/$apiKey/search.php?s=${URLEncoder.encode(query, "UTF-8")}")
             } else {
                 context?.let { Toast.makeText(it, "Kirjoita hakusana!", Toast.LENGTH_SHORT).show() }
             }
         }
 
+        // SATUNNAINEN-painikkeen toiminnallisuus
         view.findViewById<Button>(R.id.btnRandomRecipe).setOnClickListener {
+            // Kutsuu hakutoimintoa API:n "random"-osoitteella
             searchRecipes("https://www.themealdb.com/api/json/v1/$apiKey/random.php")
         }
 
@@ -64,6 +69,9 @@ class ReseptitFragment : Fragment(R.layout.fragment_reseptit) {
         }
     }
 
+    
+     //reseptien hakutoiminnallisuus verkosta.
+  
     private fun searchRecipes(urlString: String) {
         val executor = Executors.newSingleThreadExecutor()
         val handler = Handler(Looper.getMainLooper())
@@ -72,8 +80,10 @@ class ReseptitFragment : Fragment(R.layout.fragment_reseptit) {
         containerRecipesList.removeAllViews()
         containerRecipesList.addView(TextView(context).apply { text = "Haetaan..." })
 
+        
         executor.execute {
             try {
+                // Luetaan vastaus osoitteesta ja muutetaan se JSON-muotoon
                 val response = URL(urlString).readText()
                 val jsonObject = JSONObject(response)
                 val meals = jsonObject.optJSONArray("meals")
@@ -81,6 +91,7 @@ class ReseptitFragment : Fragment(R.layout.fragment_reseptit) {
                 handler.post {
                     containerRecipesList.removeAllViews()
                     if (meals != null && meals.length() > 0) {
+                        // Käydään läpi kaikki löytyneet reseptit ja lisätään ne listaan
                         for (i in 0 until meals.length()) {
                             val meal = meals.getJSONObject(i)
                             addRecipeToList(meal)
@@ -98,6 +109,7 @@ class ReseptitFragment : Fragment(R.layout.fragment_reseptit) {
         }
     }
 
+    // lisää yksittäisen reseptin (esim meat) listaan klikattavaksi kohteeksi
     private fun addRecipeToList(meal: JSONObject) {
         val inflater = LayoutInflater.from(context)
         val itemView = inflater.inflate(R.layout.item_recipe, containerRecipesList, false)
@@ -108,15 +120,16 @@ class ReseptitFragment : Fragment(R.layout.fragment_reseptit) {
         tvName.text = meal.getString("strMeal")
         val thumbUrl = meal.getString("strMealThumb")
 
-        // Lisätty Crossfade-siirtymä pehmeää latausta varten
+        // ladataan reseptin pienoiskuva netistä
         context?.let {
             Glide.with(it)
                 .load(thumbUrl)
-                .transition(DrawableTransitionOptions.withCrossFade())
+                .transition(DrawableTransitionOptions.withCrossFade()) // Pehmeä häivytys ladatessa
                 .placeholder(R.drawable.nav3_reseptit)
                 .into(ivThumb)
         }
 
+        // kun listan kohdetta klikataan, näytetään kyseisen reseptin tarkemmat tiedot
         itemView.setOnClickListener {
             showDetails(meal)
         }
@@ -124,6 +137,9 @@ class ReseptitFragment : Fragment(R.layout.fragment_reseptit) {
         containerRecipesList.addView(itemView)
     }
 
+    /**
+     * näyttää valitun reseptin kaikki tiedot: suuri kuva, ainesosat ja ohjeet.
+     */
     private fun showDetails(meal: JSONObject) {
         scrollResultsList.visibility = View.GONE
         cardRecipeDetails.visibility = View.VISIBLE
@@ -132,7 +148,6 @@ class ReseptitFragment : Fragment(R.layout.fragment_reseptit) {
         tvFullInstructions.text = meal.getString("strInstructions")
         
         val thumbUrl = meal.getString("strMealThumb")
-        // Lisätty Crossfade-siirtymä myös suurelle kuvalle
         context?.let { 
             Glide.with(it)
                 .load(thumbUrl)
@@ -140,6 +155,7 @@ class ReseptitFragment : Fragment(R.layout.fragment_reseptit) {
                 .into(ivFullImage) 
         }
 
+        // kerätään kaikki ainesosat ja niiden määrät listaksi
         val ingredients = StringBuilder()
         for (i in 1..20) {
             val ing = meal.optString("strIngredient$i")

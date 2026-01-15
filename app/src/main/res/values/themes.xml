@@ -1,17 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.Drawer2" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Päävärit - muutetaan violetti mustaksi -->
         <item name="colorPrimary">@color/black</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/darkslategray</item>
-        <item name="colorOnSecondary">@color/white</item>
-        
-        <!-- Dialogien painikkeet ja korostukset -->
-        <item name="colorAccent">@color/black</item>
-        
-        <!-- Tekstin värit dialogeissa -->
         <item name="android:textColorPrimary">@color/black</item>
+        
+        <!-- Käytetään vakaata sans-serif (Roboto) fonttia -->
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="Theme.Drawer2" parent="Base.Theme.Drawer2" />
@@ -21,11 +16,11 @@
         <item name="android:height">40dp</item>
     </style>
 
-    <!-- Tyyli sivunavigaation tekstille - Suurennettu kokoa -->
     <style name="DrawerTextAppearance">
         <item name="android:textSize">24sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="RoundedImageView">

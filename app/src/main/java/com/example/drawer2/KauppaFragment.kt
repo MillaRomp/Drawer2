@@ -39,7 +39,7 @@ class KauppaFragment : Fragment(R.layout.fragment_kauppa) {
             }
         }
     }
-
+    //ostoksen lisäys
     private fun addItemToList(name: String) {
         val context = context ?: return
         val inflater = LayoutInflater.from(context)
@@ -56,7 +56,7 @@ class KauppaFragment : Fragment(R.layout.fragment_kauppa) {
         }
         container.addView(itemView)
     }
-
+    //ostosten tallennus
     private fun saveItems() {
         val container = containerShoppingList ?: return
         val items = mutableListOf<String>()

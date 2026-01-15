@@ -37,6 +37,7 @@ class PaivakirjaFragment : Fragment(R.layout.fragment_paivakirja) {
     private val selectedFiles = mutableSetOf<File>()
     private var isUnlocked = false
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -52,8 +53,10 @@ class PaivakirjaFragment : Fragment(R.layout.fragment_paivakirja) {
         btnDeleteSelected?.setOnClickListener { deleteSelectedNotes() }
 
         if (!isUnlocked) checkPassword() else showList()
-    }
+    } //näyttää listan jos ei ole lukittu muuten ei
 
+
+    //salasanan tarkistusta jne
     private fun checkPassword() {
         val context = context ?: return
         val prefs = context.getSharedPreferences("diary_prefs", Context.MODE_PRIVATE)
@@ -109,6 +112,7 @@ class PaivakirjaFragment : Fragment(R.layout.fragment_paivakirja) {
         }
     }
 
+    //näyttää merkinnät
     private fun showList() {
         layoutList?.visibility = View.VISIBLE
         layoutEditor?.visibility = View.GONE
@@ -171,11 +175,12 @@ class PaivakirjaFragment : Fragment(R.layout.fragment_paivakirja) {
             container.addView(itemView)
         }
     }
-
+    //poistonapin päivitys näkyvyydestä
     private fun updateDeleteButtonVisibility() { 
         btnDeleteSelected?.visibility = if (selectedFiles.isNotEmpty()) View.VISIBLE else View.GONE 
     }
-    
+
+    //poistetaan valitut
     private fun deleteSelectedNotes() {
         val context = context ?: return
         AlertDialog.Builder(context).setTitle("Poista merkinnät").setMessage("Poistetaanko valitut?")
@@ -191,6 +196,7 @@ class PaivakirjaFragment : Fragment(R.layout.fragment_paivakirja) {
         return dir 
     }
 
+    //merkinnän tallennus
     private fun saveNote() {
         val context = context ?: return
         val text = etNote?.text?.toString() ?: ""

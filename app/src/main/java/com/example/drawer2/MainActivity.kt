@@ -31,11 +31,11 @@ class MainActivity : AppCompatActivity() {
         val navView = findViewById<NavigationView>(R.id.nav_view)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
-        // Poistetaan ikonien väripakotus
+        // poistetaan ikonien väripakotus niin ei sekoile
         bottomNav.itemIconTintList = null
         navView.itemIconTintList = null
 
-        // Custom hamburger-painikkeen toiminnallisuus
+        // hampparipainikkeen toiminnallisuus
         val btnHamburger = findViewById<ImageButton>(R.id.btn_hamburger_custom)
         btnHamburger.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
@@ -130,7 +130,7 @@ class MainActivity : AppCompatActivity() {
         
         isNavigating = false
     }
-
+    //animaatiota navigoinnin kuviin
     private fun animateBottomIcon(bottomNav: BottomNavigationView, selectedId: Int) {
         val menu = bottomNav.menu
         for (i in 0 until menu.size()) {
@@ -139,14 +139,14 @@ class MainActivity : AppCompatActivity() {
             val view = bottomNav.findViewById<View>(item.itemId)
             
             if (item.itemId == selectedId) {
-                // Voimakkaampi pompahdus (1.5x suuruus)
+                // pompahus
                 view.animate()
-                    .scaleX(1.5f)
-                    .scaleY(1.5f)
+                    .scaleX(1.7f)
+                    .scaleY(1.7f)
                     .setDuration(250)
                     .start()
             } else {
-                // Palautus normaalikokoon
+                // palautus normaalikokoon
                 view.animate()
                     .scaleX(1.0f)
                     .scaleY(1.0f)
